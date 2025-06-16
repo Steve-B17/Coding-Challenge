@@ -1,0 +1,18 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "clerk-backend-api>=2.2.0",
+    "fastapi>=0.115.12",
+    "groq>=0.28.0",
+    "huggingface-hub>=0.33.0",
+    "openai>=1.79.0",
+    "python-dotenv>=1.1.0",
+    "requests>=2.32.4",
+    "sqlalchemy>=2.0.41",
+    "svix>=1.65.0",
+    "uvicorn>=0.34.2",
+]
