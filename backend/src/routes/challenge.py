@@ -87,16 +87,26 @@ async def my_history(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/quota")
 async def get_quota(request: Request, db: Session = Depends(get_db)):
-    user_details = authenticate_and_get_user_details(request)
-    user_id = user_details.get("user_id")
+    try:
+        user_details = authenticate_and_get_user_details(request)
+        user_id = user_details.get("user_id")
 
-    quota = get_challenge_quota(db, user_id)
-    if not quota:
+        quota = get_challenge_quota(db, user_id)
+        if not quota:
+            return {
+                "user_id": user_id,
+                "quota_remaining": 0,
+                "last_reset_date": datetime.now()
+            }
+
+        quota = reset_quota_if_needed(db, quota)
+        # Return as dict for JSON serialization
         return {
-            "user_id": user_id,
-            "quota_remaining": 0,
-            "last_reset_date": datetime.now()
+            "user_id": quota.user_id,
+            "quota_remaining": quota.quota_remaining,
+            "last_reset_date": quota.last_reset_date
         }
-
-    quota = reset_quota_if_needed(db, quota)
-    return quota
+    except Exception as e:
+        import traceback
+        print("/quota error:", traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
